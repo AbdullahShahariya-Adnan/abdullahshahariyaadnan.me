@@ -5,14 +5,14 @@
 // ────────────────────────────────────────────────────────────
 
 export const content = {
-  siteTitle: "Md Abdullah Shahariya Adnan — Portfolio",
+  siteTitle: "Adnan — Portfolio",
   siteDescription:
     "Computer Science student, aspiring cybersecurity professional, and full-stack developer.",
 
   // Navbar logo (top-left corner)
   logo: {
     bold: "Adnan",
-    light: "almagedy",
+    light: "",
   },
 
   // Hero section (the big text at the top of the homepage)
