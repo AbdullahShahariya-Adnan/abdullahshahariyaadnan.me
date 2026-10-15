@@ -5,7 +5,7 @@
 // ────────────────────────────────────────────────────────────
 
 export const content = {
-  siteTitle: " Adnan",
+  siteTitle: "Adnan",
   siteDescription:
     "Computer Science student, aspiring cybersecurity professional, and full-stack developer.",
 
