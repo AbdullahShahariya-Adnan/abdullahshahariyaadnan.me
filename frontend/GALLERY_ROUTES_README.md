@@ -1,0 +1,1 @@
+Gallery now has dedicated pages: /gallery and /gallery/travelling. The navbar Gallery link points to /gallery. The homepage gallery section remains available. Direct refreshes need SPA rewrites (frontend/vercel.json already handles them). No database migration required.

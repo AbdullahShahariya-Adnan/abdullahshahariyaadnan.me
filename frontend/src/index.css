@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #00040b;
+  --surface: #0a1218;
+  --surface-alt: #0f1a20;
+  --text: #f3f6f6;
+  --muted: #8da3a3;
+  --accent: #2dd4bf;
+  --accent-2: #14b8a6;
+  --border: #16262c;
+}
+
+.light {
+  --bg: #00040b;
+  --surface: #0a1218;
+  --surface-alt: #0f1a20;
+  --text: #f3f6f6;
+  --muted: #8da3a3;
+  --accent: #2dd4bf;
+  --accent-2: #14b8a6;
+  --border: #16262c;
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background: var(--accent);
+  color: #14181c;
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.hero-photo {
+  mask-image: linear-gradient(to right, transparent 0%, black 55%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 55%);
+}
+
+@media (min-width: 768px) {
+  .hero-photo {
+    mask-image: linear-gradient(to right, transparent 0%, black 25%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%);
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-bg {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.section-num {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Mobile-first safeguards: prevent wide media and long text from pushing the viewport. */
+html { max-width: 100%; overflow-x: clip; }
+body, #root { width: 100%; min-width: 0; max-width: 100%; }
+img, video, svg { max-width: 100%; }
+img, video { height: auto; }
+main, section, article { min-width: 0; }
+p, h1, h2, h3, a { overflow-wrap: anywhere; }
+@media (max-width: 639px) {
+  section:not(#hero) { scroll-margin-top: 76px; }
+  .section-num { flex-shrink: 0; }
+  input, textarea, select { max-width: 100%; min-width: 0; }
+}
