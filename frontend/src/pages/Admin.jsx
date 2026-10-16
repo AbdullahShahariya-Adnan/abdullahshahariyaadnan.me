@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { api } from "../lib/api.js";
 import SocialEmbed, { getSocialEmbed } from "../components/SocialEmbed.jsx";
+import TravelManager from "../components/TravelManager.jsx";
+import SkillsManager from "../components/SkillsManager.jsx";
+import SettingsManager from "../components/SettingsManager.jsx";
+import ContactInbox from "../components/ContactInbox.jsx";
+import AppearanceManager from "../components/AppearanceManager.jsx";
+import BlogManager from "../components/BlogManager.jsx";
 
 const EMPTY_GALLERY = { src: "", caption: "", sort_order: 0, category: "gallery", link_url: "" };
 
@@ -130,7 +136,7 @@ export default function Admin() {
     setBusy(true);
     setNotice("");
     try {
-      const payload = tab === "social" ? { ...galleryForm, src: galleryForm.link_url, category: "social" } : galleryForm;
+      const payload = tab === "social" ? { ...galleryForm, src: galleryForm.src || galleryForm.link_url, category: "social" } : galleryForm;
       if (galleryEditing === "new") await api.addGalleryImage(payload);
       else await api.updateGalleryImage(galleryEditing, payload);
       await refreshGallery();
@@ -211,7 +217,7 @@ export default function Admin() {
     );
   }
 
-  const nav = [{id:"dashboard",name:"Dashboard",icon:"◫"},{id:"projects",name:"Projects",icon:"▣"},{id:"gallery",name:"Gallery",icon:"▧"},{id:"travelling",name:"Travelling",icon:"✈"},{id:"social",name:"Social Media",icon:"◎"},{id:"messages",name:"Messages",icon:"✉"}];
+  const nav = [{id:"dashboard",name:"Dashboard",icon:"◫"},{id:"projects",name:"Projects",icon:"▣"},{id:"gallery",name:"Gallery",icon:"▧"},{id:"travelling",name:"Travel Albums",icon:"✈"},{id:"social",name:"Social Media",icon:"◎"},{id:"skills",name:"Skills",icon:"✦"},{id:"blog",name:"Blog Posts",icon:"✎"},{id:"settings",name:"Site Settings",icon:"⚙"},{id:"appearance",name:"Appearance",icon:"◈"},{id:"messages",name:"Messages",icon:"✉"}];
   return (
     <div className="min-h-screen bg-bg text-text text-sm lg:flex">
       <aside className={`${mobileMenu ? "block" : "hidden"} lg:block lg:w-60 lg:h-screen lg:sticky lg:top-0 shrink-0 bg-[#07121b] border-r border-border p-5`}>
@@ -227,7 +233,7 @@ export default function Admin() {
           <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">{[{name:"Projects",count:projects.length,tab:"projects"},{name:"Gallery photos",count:galleryPhotos.length,tab:"gallery"},{name:"Social posts",count:socialPosts.length,tab:"social"},{name:"Messages",count:messages.length,tab:"messages"}].map(c=><button key={c.tab} onClick={()=>navigate(c.tab)} className="text-left rounded-2xl border border-border bg-surface p-5 hover:border-accent"><div className="text-3xl font-bold text-accent">{c.count}</div><div className="text-muted mt-2">{c.name}</div></button>)}</div>
           <div className="grid md:grid-cols-2 gap-5"><section className="rounded-2xl border border-border bg-surface p-5 space-y-3"><h2 className="font-semibold text-lg mb-4">Quick actions</h2><button onClick={()=>{navigate("projects");openNew();}} className="w-full rounded-xl gradient-bg text-[#14181c] py-3 font-semibold">+ Add project</button><button onClick={()=>{navigate("gallery");setGalleryEditing("new");setGalleryForm({...EMPTY_GALLERY,category:"gallery"});}} className="w-full rounded-xl border border-border py-3">+ Add gallery photo</button><button onClick={()=>{navigate("social");setGalleryEditing("new");setGalleryForm({...EMPTY_GALLERY,category:"social"});}} className="w-full rounded-xl border border-border py-3">+ Add social post</button></section>
           <section className="rounded-2xl border border-border bg-surface p-5"><div className="flex justify-between mb-4"><h2 className="font-semibold text-lg">Recent messages</h2><button onClick={()=>navigate("messages")} className="text-accent text-xs">View all →</button></div>{messages.length ? messages.slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,4).map(m=><div key={m.id} className="border-b border-border py-3"><p className="font-medium">{m.name}</p><p className="text-muted text-xs truncate">{m.subject || m.message}</p></div>) : <p className="text-muted">No messages yet.</p>}</section></div>
-          <p className="text-muted text-xs">Dashboard counts come from your existing API. No new services or database migrations required.</p>
+          <section className="rounded-2xl border border-border bg-surface p-5"><h2 className="text-lg font-bold">Website control center</h2><p className="text-muted text-sm mt-1 mb-4">Manage your content without editing React files.</p><div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">{[{tab:"settings",label:"Edit homepage & SEO"},{tab:"skills",label:"Manage technology stack"},{tab:"travelling",label:"Manage travel stories"},{tab:"projects",label:"Update project case studies"},{tab:"blog",label:"Write a blog post"}].map(x=><button key={x.tab} onClick={()=>navigate(x.tab)} className="text-left rounded-xl border border-border p-4 hover:border-accent text-accent">{x.label} ↗</button>)}</div></section><p className="text-muted text-xs">Dashboard counts come from your existing API. New section descriptions can be edited under Site Settings.</p>
         </div>}
         {notice && <p role="status" className="mb-5 text-accent text-sm">{notice}</p>}
         {tab === "projects" && (
@@ -302,16 +308,27 @@ export default function Admin() {
           </div>
         )}
 
-        {(tab === "gallery" || tab === "travelling" || tab === "social") && (
+        {tab === "travelling" && <TravelManager setNotice={setNotice} />}
+        {tab === "skills" && <SkillsManager />}
+        {tab === "settings" && <SettingsManager />}
+        {tab === "appearance" && <AppearanceManager />}
+        {tab === "blog" && <BlogManager />}
+        {(tab === "gallery" || tab === "social") && (
           <div className="space-y-5">
-            <p className="text-muted">{tab === "social" ? "Paste a public Facebook, Instagram, YouTube, or TikTok post link. No upload required." : tab === "travelling" ? "Add travel photos to the Travelling collection on your website." : "Add pictures to your public homepage gallery."} Only a logged-in administrator can publish changes.</p>
+            <p className="text-muted">{tab === "social" ? "Add a public post link and optionally a custom thumbnail. Cloudinary thumbnails display reliably even when embeds are blocked." : tab === "travelling" ? "Add travel photos to the Travelling collection on your website." : "Add pictures to your public homepage gallery."} Only a logged-in administrator can publish changes.</p>
             {galleryEditing ? (
               <form onSubmit={saveGallery} className="space-y-3 border border-border rounded-2xl p-5 bg-surface">
                 {tab === "social" ? <>
                   <label className="block text-muted">Post or video link (Facebook, Instagram, YouTube, TikTok)
-                    <input type="url" required value={galleryForm.link_url || ""} onChange={(e) => setGalleryForm({ ...galleryForm, link_url: e.target.value, src: e.target.value })} placeholder="https://www.youtube.com/watch?v=..." className="block w-full mt-1 bg-surfaceAlt border border-border rounded-lg px-3 py-2" />
+                    <input type="url" required value={galleryForm.link_url || ""} onChange={(e) => setGalleryForm({ ...galleryForm, link_url: e.target.value, src: !galleryForm.src || galleryForm.src === galleryForm.link_url ? e.target.value : galleryForm.src })} placeholder="https://www.youtube.com/watch?v=..." className="block w-full mt-1 bg-surfaceAlt border border-border rounded-lg px-3 py-2" />
                   </label>
-                  {galleryForm.link_url && (getSocialEmbed(galleryForm.link_url) ? <div className="max-w-sm rounded-xl overflow-hidden border border-border"><SocialEmbed url={galleryForm.link_url} /></div> : <p className="text-sm text-muted">This link cannot be previewed. Use the original public post URL, not iframe HTML or a share-code snippet.</p>)}
+                  <label className="block text-muted">Thumbnail image (optional, recommended for Facebook / Instagram)
+                    <input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>uploadGalleryImage(e.target.files?.[0])} className="block mt-2 w-full" />
+                  </label>
+                  <label className="block text-muted">Or paste Cloudinary thumbnail URL
+                    <input type="url" value={galleryForm.src === galleryForm.link_url ? "" : galleryForm.src || ""} onChange={e=>setGalleryForm({...galleryForm,src:e.target.value||galleryForm.link_url})} placeholder="https://res.cloudinary.com/..." className="block w-full mt-1 bg-surfaceAlt border border-border rounded-lg px-3 py-2" />
+                  </label>
+                  {galleryForm.src && galleryForm.src !== galleryForm.link_url ? <img src={galleryForm.src} alt="Thumbnail preview" className="max-w-sm w-full h-44 object-cover rounded-xl" /> : <p className="text-sm text-muted">Without a thumbnail, YouTube shows its automatic thumbnail; Facebook and Instagram may show a placeholder.</p>}
                 </> : <>
                   <label className="block text-muted">Choose a photo (JPG, PNG or WebP, max 5 MB)
                     <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(e) => uploadGalleryImage(e.target.files?.[0])} className="block mt-2 w-full" />
@@ -351,24 +368,7 @@ export default function Admin() {
           </div>
         )}
 
-        {tab === "messages" && (
-          <div className="space-y-3">
-            {messages.length === 0 && <p className="text-muted">No messages yet.</p>}
-            {messages.filter(m=>matches(`${m.name} ${m.email} ${m.subject} ${m.message}`)).map((m) => (
-              <div key={m.id} className="border border-border rounded-2xl p-4 bg-surface">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <p className="text-text font-medium">{m.name} <span className="text-muted font-normal">&lt;{m.email}&gt;</span></p>
-                    {m.subject && <p className="text-accent2 text-xs mt-1">{m.subject}</p>}
-                  </div>
-                  <button onClick={() => removeMessage(m.id)} className="text-red-400 hover:underline text-xs">delete</button>
-                </div>
-                <p className="text-muted text-sm">{m.message}</p>
-                <p className="text-muted text-xs mt-2">{new Date(m.created_at).toLocaleString()}</p>
-              </div>
-            ))}
-          </div>
-        )}
+        {tab === "messages" && <ContactInbox messages={messages} setMessages={setMessages} refresh={refreshMessages} />}
       </div></main>
     </div>
   );

@@ -13,7 +13,7 @@ const socialPlatform = (value) => {
 };
 const validEntry = (src, category, link) => (category === "gallery" || category === "travelling")
   ? validUrl(src) && (!link || validUrl(link))
-  : category === "social" && socialPlatform(link || src);
+  : category === "social" && socialPlatform(link || src) && (!link || !src || src === link || validUrl(src));
 
 const validId = (id) => /^\d{1,12}$/.test(String(id));
 const validUrl = (value) => typeof value === "string" && value.length <= 2048 && /^https:\/\/[^\s]+$/i.test(value);
@@ -37,7 +37,7 @@ router.post("/", requireAdmin, async (req, res) => {
   try {
     const [result] = await pool.execute(
       "INSERT INTO gallery_items (type, src, caption, sort_order, category, link_url) VALUES (?, ?, ?, ?, ?, ?)",
-      [category === "social" ? "embed" : "image", src, caption, Number(sort_order), category, link_url]
+      [category === "social" && (!src || src === link_url) ? "embed" : "image", src || link_url, caption, Number(sort_order), category, link_url]
     );
     res.status(201).json({ id: result.insertId });
   } catch (err) {
@@ -56,7 +56,7 @@ router.put("/:id", requireAdmin, async (req, res) => {
   try {
     const [result] = await pool.execute(
       "UPDATE gallery_items SET type = ?, src = ?, caption = ?, sort_order = ?, category = ?, link_url = ? WHERE id = ?",
-      [category === "social" ? "embed" : "image", src, caption, Number(sort_order), category, link_url, req.params.id]
+      [category === "social" && (!src || src === link_url) ? "embed" : "image", src || link_url, caption, Number(sort_order), category, link_url, req.params.id]
     );
     if (!result.affectedRows) return res.status(404).json({ error: "Image not found" });
     res.json({ ok: true });

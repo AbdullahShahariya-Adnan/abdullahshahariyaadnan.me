@@ -1,3 +1,5 @@
+import {AppearanceTheme,useAppearance,parseList,defaultSections} from "./components/useAppearance.js";
+import SiteMeta from "./components/SiteMeta.jsx";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import Hero from "./components/Hero.jsx";
@@ -15,26 +17,22 @@ import Admin from "./pages/Admin.jsx";
 import ProjectsPage from "./pages/ProjectsPage.jsx";
 import ProjectDetail from "./pages/ProjectDetail.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
+import {BlogPage,BlogDetail} from "./pages/BlogPage.jsx";
 
 function GalleryPage({ collection = "gallery" }) {
   return <><Navbar /><main className="pt-14"><Gallery initialCollection={collection} standalone /></main><Footer /></>;
 }
 
+const homeComponents={hero:Hero,services:Services,projects:Projects,gallery:Gallery,social:SocialFeed,about:About,skills:Skills,education:Education,talk:TalkCta,contact:Contact};
 function Home() {
+  const settings=useAppearance();
+  const sections=parseList(settings.home_sections,defaultSections);
+  const ordered=[...sections,...defaultSections.filter(x=>!sections.some(s=>s.id===x.id))];
   return (
     <>
       <Navbar />
       <main>
-        <Hero />
-        <Services />
-        <Projects />
-        <Gallery />
-        <SocialFeed />
-        <About />
-        <Skills />
-        <Education />
-        <TalkCta />
-        <Contact />
+        {ordered.filter(x=>x.visible!==false&&homeComponents[x.id]).map(x=>{const Component=homeComponents[x.id];return <Component key={x.id}/>})}
       </main>
       <Footer />
     </>
@@ -43,6 +41,9 @@ function Home() {
 
 export default function App() {
   return (
+    <>
+    <AppearanceTheme />
+    <SiteMeta />
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/projects" element={<ProjectsPage />} />
@@ -50,7 +51,10 @@ export default function App() {
       <Route path="/gallery/travelling" element={<GalleryPage collection="travelling" />} />
       <Route path="/projects/:id" element={<ProjectDetail />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/blog" element={<BlogPage />} />
+      <Route path="/blog/:slug" element={<BlogDetail />} />
       <Route path="/admin" element={<Admin />} />
     </Routes>
+    </>
   );
 }

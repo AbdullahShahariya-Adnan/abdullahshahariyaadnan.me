@@ -1,23 +1,61 @@
 import { useEffect, useState } from "react";
+import { useAppearance, parseList, defaultNav } from "./useAppearance.js";
 import { content } from "../content.js";
 
-const LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/projects", label: "Work" },
-  { href: "/gallery", label: "Gallery" },
-];
-
 export default function Navbar() {
+  const settings = useAppearance();
+  const links = parseList(settings.nav_links, defaultNav);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  useEffect(() => { setMenuOpen(false); }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // When arriving at /#contact from another page, wait until the
+  // homepage has rendered its contact section before scrolling.
+  useEffect(() => {
+    if (window.location.pathname !== "/" || window.location.hash !== "#contact") {
+      return;
+    }
+
+    let attempts = 0;
+    const scrollToContact = () => {
+      const section = document.getElementById("contact");
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+        return true;
+      }
+      return false;
+    };
+
+    if (scrollToContact()) return;
+
+    const timer = window.setInterval(() => {
+      attempts += 1;
+      if (scrollToContact() || attempts >= 50) {
+        window.clearInterval(timer);
+      }
+    }, 100);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const goToContact = (event) => {
+    setMenuOpen(false);
+    if (window.location.pathname === "/") {
+      const section = document.getElementById("contact");
+      if (section) {
+        event.preventDefault();
+        window.history.replaceState(null, "", "/#contact");
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+    // On other pages, the regular /#contact link loads the homepage.
+  };
 
   return (
     <header
@@ -31,7 +69,7 @@ export default function Navbar() {
           <span className="font-medium text-muted">{content.logo.light}</span>
         </a>
         <ul className="hidden md:flex items-center gap-10 text-sm text-text">
-          {LINKS.map((link) => (
+          {links.map((link) => (
             <li key={link.href}>
               <a href={link.href} className="hover:text-accent transition-colors">
                 {link.label}
@@ -52,17 +90,42 @@ export default function Navbar() {
             </svg>
           </a>
           <a
-            href="#contact"
+            href="/#contact"
+            onClick={goToContact}
             className="hidden sm:inline-block text-xs font-semibold tracking-wide px-5 py-2.5 rounded-full gradient-bg text-[#14181c] hover:opacity-90 transition-opacity"
           >
             LET'S TALK
           </a>
-          <button type="button" aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="mobile-navigation" onClick={() => setMenuOpen(v => !v)} className="md:hidden w-11 h-11 flex items-center justify-center rounded-full border border-border bg-surface text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent">
+          <button
+            type="button"
+            aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-navigation"
+            onClick={() => setMenuOpen((value) => !value)}
+            className="md:hidden w-11 h-11 flex items-center justify-center rounded-full border border-border bg-surface text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+          >
             {menuOpen ? <span aria-hidden="true" className="text-2xl leading-none">×</span> : <span aria-hidden="true" className="text-xl leading-none">☰</span>}
           </button>
         </div>
       </nav>
-      {menuOpen && <div id="mobile-navigation" className="md:hidden border-t border-border bg-bg/95 backdrop-blur px-4 pb-5 pt-2 shadow-xl"><ul className="max-w-6xl mx-auto flex flex-col gap-1">{LINKS.map(link => <li key={link.href}><a href={link.href} onClick={() => setMenuOpen(false)} className="block rounded-xl px-4 py-3 text-base font-medium text-text hover:bg-surface hover:text-accent">{link.label}</a></li>)}<li><a href="/#contact" onClick={() => setMenuOpen(false)} className="block rounded-xl px-4 py-3 text-base font-medium text-accent">Contact</a></li></ul></div>}
+      {menuOpen && (
+        <div id="mobile-navigation" className="md:hidden border-t border-border bg-bg/95 backdrop-blur px-4 pb-5 pt-2 shadow-xl">
+          <ul className="max-w-6xl mx-auto flex flex-col gap-1">
+            {links.map((link) => (
+              <li key={link.href}>
+                <a href={link.href} onClick={() => setMenuOpen(false)} className="block rounded-xl px-4 py-3 text-base font-medium text-text hover:bg-surface hover:text-accent">
+                  {link.label}
+                </a>
+              </li>
+            ))}
+            <li>
+              <a href="/#contact" onClick={goToContact} className="block rounded-xl px-4 py-3 text-base font-medium text-accent">
+                Contact
+              </a>
+            </li>
+          </ul>
+        </div>
+      )}
     </header>
   );
 }

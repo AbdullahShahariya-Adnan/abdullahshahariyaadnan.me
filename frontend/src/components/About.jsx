@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { content } from "../content.js";
+import {useSiteSettings} from "../lib/useSiteSettings.js";
 
 const reveal = {
   hidden: { opacity: 0, y: 24 },
@@ -8,6 +9,7 @@ const reveal = {
 
 export default function About() {
   const { about } = content;
+  const site = useSiteSettings();
 
   return (
     <section id="about" className="relative px-6 py-24 overflow-hidden">
@@ -35,7 +37,7 @@ export default function About() {
           viewport={{ once: true, amount: 0.4 }}
           className="text-muted text-lg leading-relaxed mb-14 max-w-2xl"
         >
-          {about.bio}
+          {site.about_intro || about.bio}
         </motion.p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">

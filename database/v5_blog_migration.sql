@@ -1,0 +1,15 @@
+-- Run once on Aiven MySQL after taking a backup.
+CREATE TABLE IF NOT EXISTS blog_posts (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ title VARCHAR(180) NOT NULL,
+ slug VARCHAR(190) NOT NULL UNIQUE,
+ category ENUM('IT','Travelling') NOT NULL DEFAULT 'IT',
+ excerpt VARCHAR(600) NOT NULL DEFAULT '',
+ body MEDIUMTEXT NOT NULL,
+ cover_url VARCHAR(2000) NOT NULL DEFAULT '',
+ status ENUM('draft','published') NOT NULL DEFAULT 'draft',
+ published_at DATETIME NULL,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ INDEX idx_blog_published (status,published_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -1,16 +1,6 @@
-import { content } from "../content.js";
-
-export default function Footer() {
-  return (
-    <footer className="px-6 py-10 border-t border-border">
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted">
-        <p className="text-center sm:text-left">© {new Date().getFullYear()} Md Abdullah Shahariya Adnan. All rights reserved.</p>
-        <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-          <a href={content.contact.github} target="_blank" rel="noreferrer" className="hover:text-accent">GitHub</a>
-          <a href={content.contact.linkedin} target="_blank" rel="noreferrer" className="hover:text-accent">LinkedIn</a>
-          <a href={`mailto:${content.contact.email}`} className="hover:text-accent">Email</a>
-        </div>
-      </div>
-    </footer>
-  );
-}
+import {useEffect,useState} from "react";
+import {content} from "../content.js";
+import {parseList} from "./useAppearance.js";
+import {api} from "../lib/api.js";
+const menu=[["Home","/"],["Portfolio","/projects"],["About","/about"],["Travel Albums","/gallery/travelling"],["Blog","/blog"]];
+export default function Footer(){const [settings,setSettings]=useState({});useEffect(()=>{api.getSettings().then(setSettings).catch(()=>{})},[]);const email=settings.contact_email||content.contact.email;const links=parseList(settings.footer_links,menu.map(([label,href])=>({label,href})));return <footer className="border-t border-border bg-[#0b0e13] text-white px-6 pt-16 pb-8"><div className="max-w-6xl mx-auto grid gap-10 sm:grid-cols-2 lg:grid-cols-4"><div><a href="/" className="font-display font-bold text-xl">Adnan<span className="text-accent">.</span></a><p className="text-sm text-gray-400 mt-4 max-w-xs">{settings.footer_tagline||"Building useful software, sharing ideas, and documenting the journey."}</p><a href="/blog" className="inline-flex mt-5 text-sm text-accent hover:underline">Explore my latest writing ↗</a></div><div><h3 className="font-bold mb-5 text-sm">Site Menu</h3><ul className="space-y-3">{links.map(({label,href:url})=><li key={url}><a className="text-sm text-gray-400 hover:text-accent" href={url}>{label}</a></li>)}</ul></div><div><h3 className="font-bold mb-5 text-sm">Information</h3><ul className="space-y-3"><li><a href="/projects" className="text-sm text-gray-400 hover:text-accent">Projects & case studies</a></li><li><a href="/gallery/travelling" className="text-sm text-gray-400 hover:text-accent">Travel journal</a></li><li><a href="/blog" className="text-sm text-gray-400 hover:text-accent">IT & travel articles</a></li><li><a href="/#contact" className="text-sm text-gray-400 hover:text-accent">Contact</a></li></ul></div><div><h3 className="font-bold mb-5 text-sm">Contact</h3><a href={`mailto:${email}`} className="text-sm text-gray-400 hover:text-accent break-all">{email}</a><h3 className="font-bold mt-7 mb-3 text-sm">Social links</h3><div className="flex flex-wrap gap-4 text-sm"><a href={content.contact.github} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-accent">GitHub ↗</a><a href={content.contact.linkedin} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-accent">LinkedIn ↗</a></div></div></div><div className="max-w-6xl mx-auto border-t border-white/10 mt-12 pt-6 flex flex-wrap justify-between gap-3 text-xs text-gray-500"><p>© {new Date().getFullYear()} Md Abdullah Shahariya Adnan. All rights reserved.</p><a href="/#contact" className="hover:text-accent">Contact</a></div></footer>}

@@ -10,6 +10,10 @@ import contactRoutes from "./routes/contact.js";
 import skillRoutes from "./routes/skills.js";
 import educationRoutes from "./routes/education.js";
 import galleryRoutes from "./routes/gallery.js";
+import travelRoutes from "./routes/travel.js";
+import uploadRoutes from "./routes/upload.js";
+import settingsRoutes from "./routes/settings.js";
+import blogRoutes from "./routes/blog.js";
 
 dotenv.config();
 
@@ -38,6 +42,7 @@ const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 8, standardHea
 const writeLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 80, standardHeaders: "draft-7", legacyHeaders: false });
 app.use("/api/auth/login", loginLimiter);
 app.use("/api/projects", (req, res, next) => req.method === "GET" ? next() : writeLimiter(req, res, next));
+app.use("/api/travel", (req, res, next) => req.method === "GET" ? next() : writeLimiter(req, res, next));
 app.use("/api/gallery", (req, res, next) => req.method === "GET" ? next() : writeLimiter(req, res, next));
 app.use("/api/auth", limiter);
 app.use("/api/contact", limiter);
@@ -48,8 +53,12 @@ app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/skills", skillRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use("/api/blog", (req,res,next)=>req.method==="GET"?next():writeLimiter(req,res,next), blogRoutes);
 app.use("/api/education", educationRoutes);
 app.use("/api/gallery", galleryRoutes);
+app.use("/api/travel", travelRoutes);
+app.use("/api/upload-media", writeLimiter, uploadRoutes);
 
 app.use((req, res) => res.status(404).json({ error: "Not found" }));
 

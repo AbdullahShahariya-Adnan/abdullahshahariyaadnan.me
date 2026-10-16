@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../lib/api.js";
 import { motion, AnimatePresence } from "framer-motion";
 import { content } from "../content.js";
+import TravelAlbums from "./TravelAlbums.jsx";
 
 export default function Gallery({ initialCollection = "gallery", standalone = false }) {
   const [active, setActive] = useState(null);
@@ -18,7 +19,7 @@ export default function Gallery({ initialCollection = "gallery", standalone = fa
   const travellingItems = items.filter((item) => item.category === "travelling");
   const [collection, setCollection] = useState(initialCollection);
   const displayedItems = collection === "travelling" ? travellingItems : galleryItems;
-  if (galleryItems.length === 0 && travellingItems.length === 0) return null;
+  // Keep the gallery visible even when only new travel albums exist.
 
   return (
     <section id="gallery" className={`px-6 py-24 ${standalone ? "min-h-[70vh]" : ""}`}>
@@ -37,7 +38,8 @@ export default function Gallery({ initialCollection = "gallery", standalone = fa
             <button key={c.id} type="button" onClick={() => { if (standalone) { window.location.assign(c.id === "travelling" ? "/gallery/travelling" : "/gallery"); } else { setCollection(c.id); setActive(null); } }} aria-pressed={collection === c.id} className={`rounded-full px-5 py-2 border transition-colors ${collection === c.id ? "bg-accent text-[#14181c] border-accent" : "bg-surface border-border text-muted hover:text-text"}`}>{c.label} <span className="opacity-70 text-xs ml-1">({c.count})</span></button>
           ))}
         </div>
-        {displayedItems.length === 0 && <p className="text-muted py-8">No photos in this collection yet.</p>}
+        {collection === "travelling" && <div className="mb-10"><TravelAlbums /></div>}
+        {displayedItems.length === 0 && collection !== "travelling" && <p className="text-muted py-8">No photos in this collection yet.</p>}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayedItems.map((item, i) => (
             <motion.button

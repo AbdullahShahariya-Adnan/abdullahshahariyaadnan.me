@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { api } from "../lib/api.js";
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "", website: "" });
   const [status, setStatus] = useState("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -16,7 +16,7 @@ export default function Contact() {
     try {
       await api.sendMessage(form);
       setStatus("sent");
-      setForm({ name: "", email: "", subject: "", message: "" });
+      setForm({ name: "", email: "", subject: "", message: "", website: "" });
     } catch (err) {
       setStatus("error");
       setErrorMsg(err.message || "Something went wrong. Please try again.");
@@ -44,6 +44,7 @@ export default function Contact() {
           onSubmit={handleSubmit}
           className="space-y-4"
         >
+          <div aria-hidden="true" className="absolute opacity-0 pointer-events-none" style={{left:"-9999px"}}><label>Website<input tabIndex={-1} autoComplete="off" name="website" value={form.website} onChange={handleChange}/></label></div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm text-muted mb-1.5">Name *</label>

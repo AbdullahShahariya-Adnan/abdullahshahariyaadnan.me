@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { content } from "../content.js";
+import {useSiteSettings} from "../lib/useSiteSettings.js";
 
 const SOCIALS = [
   {
@@ -33,6 +34,7 @@ const SOCIALS = [
 
 export default function Hero() {
   const { hero } = content;
+  const site = useSiteSettings();
 
   return (
     <section id="hero" className="relative overflow-hidden">
@@ -64,6 +66,7 @@ export default function Hero() {
               <span className="w-8 h-px bg-accent" />
             </motion.div>
 
+            {site.hero_title && <p className="text-accent font-semibold mb-3">{site.hero_title}</p>}
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -81,7 +84,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mt-5 text-base font-medium tracking-wide text-muted uppercase"
             >
-              {hero.tagline}
+              {site.hero_subtitle || hero.tagline}
             </motion.p>
 
             <motion.div
@@ -171,7 +174,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-4 text-xs font-medium tracking-wide text-muted uppercase"
           >
-            {hero.tagline}
+            {site.hero_subtitle || hero.tagline}
           </motion.p>
 
           <motion.div

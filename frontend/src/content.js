@@ -65,7 +65,7 @@ export const content = {
 
   // Contact info + social links (footer, hero icon row, email links)
   contact: {
-    email: "your-email@example.com",
+    email: "abdullahshahariyatasin@gmail.com",
     github: "https://github.com/AbdullahShahariya-Adnan",
     linkedin: "https://www.linkedin.com/in/abdullah-shahariya-adnan/",
   },

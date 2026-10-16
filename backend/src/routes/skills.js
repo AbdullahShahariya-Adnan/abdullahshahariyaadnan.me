@@ -33,6 +33,12 @@ router.post("/", requireAdmin, async (req, res) => {
   }
 });
 
+router.put("/:id", requireAdmin, async (req,res)=>{
+ const {category,name,sort_order=0}=req.body||{};
+ if(!/^\d+$/.test(req.params.id)||typeof category!=="string"||!category.trim()||category.length>50||typeof name!=="string"||!name.trim()||name.length>100||!Number.isInteger(Number(sort_order)))return res.status(400).json({error:"Invalid skill"});
+ try { const [r]=await pool.execute("UPDATE skills SET category=?, name=?, sort_order=? WHERE id=?",[category.trim(),name.trim(),Number(sort_order),req.params.id]);if(!r.affectedRows)return res.status(404).json({error:"Skill not found"});res.json({ok:true});}catch(e){console.error(e);res.status(500).json({error:"Could not update skill"});}
+});
+
 router.delete("/:id", requireAdmin, async (req, res) => {
   try {
     await pool.query("DELETE FROM skills WHERE id = ?", [req.params.id]);
