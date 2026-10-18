@@ -1,8 +1,9 @@
-// ────────────────────────────────────────────────────────────
-// EDIT ME: This file holds all the text and links shown on the site.
-// Change anything here and the whole site updates automatically —
-// no need to touch any other file.
-// ────────────────────────────────────────────────────────────
+
+ // ────────────────────────────────────────────────────────────
+ // EDIT ME: This file holds all the text and links shown on the site.
+ // Change anything here and the whole site updates automatically —
+ // no need to touch any other file.
+ // ────────────────────────────────────────────────────────────
 
 export const content = {
   siteTitle: "Adnan",
@@ -22,7 +23,7 @@ export const content = {
     lastName: "Shahariya Adnan",
     tagline: "FULL-STACK DEVELOPER  |  ASPIRING CYBERSECURITY PRO  |  PROBLEM SOLVER",
     ctaLabel: "Contact Me",
-    photo: "/adnan-photo.webp", // put a new photo in frontend/public/ and change this filename
+    photo: "/adnan-photo.webp",
   },
 
   // About section (short version shown on the homepage)
@@ -57,7 +58,11 @@ export const content = {
   gallery: {
     subtitle: "A few photos and clips — projects, events, and behind the scenes.",
     items: [
-      { type: "image", src: "/adnan-photo.png", caption: "Add more of your own photos here" },
+      {
+        type: "image",
+        src: "/adnan-photo.webp",
+        caption: "Add more of your own photos here",
+      },
       // { type: "image", src: "/gallery/photo-2.jpg", caption: "..." },
       // { type: "video", src: "/gallery/video-1.mp4", caption: "..." },
     ],
