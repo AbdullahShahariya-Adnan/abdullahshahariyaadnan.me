@@ -22,7 +22,7 @@ export const content = {
     lastName: "Shahariya Adnan",
     tagline: "FULL-STACK DEVELOPER  |  ASPIRING CYBERSECURITY PRO  |  PROBLEM SOLVER",
     ctaLabel: "Contact Me",
-    photo: "/adnan-photo.png", // put a new photo in frontend/public/ and change this filename
+    photo: "/adnan-photo.webp", // put a new photo in frontend/public/ and change this filename
   },
 
   // About section (short version shown on the homepage)
