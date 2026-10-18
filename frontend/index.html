@@ -19,6 +19,15 @@
       content="Computer Science student, aspiring cybersecurity professional, and full-stack developer."
     />
 
+    <!-- Load the hero image as early as possible -->
+    <link
+      rel="preload"
+      as="image"
+      href="/adnan-photo.webp"
+      fetchpriority="high"
+    />
+
+    <!-- Connect early to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       rel="preconnect"
@@ -26,12 +35,14 @@
       crossorigin
     />
 
+    <!-- Preload Google Fonts stylesheet -->
     <link
       rel="preload"
       as="style"
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
     />
 
+    <!-- Load fonts without blocking initial rendering -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
